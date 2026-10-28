@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Student Task Manager</h1>
+            <p>Organize your studies, one task at a time.</p>
+        </header>
+
+        <section class="summary">
+            <div class="card">
+                <h3>Total Tasks</h3>
+                <p id="totalTasks">0</p>
+            </div>
+            <div class="card">
+                <h3>Pending</h3>
+                <p id="pendingTasks">0</p>
+            </div>
+            <div class="card">
+                <h3>Completed</h3>
+                <p id="completedTasks">0</p>
+            </div>
+        </section>
+
+        <section class="task-section">
+            <h2>Add a New Task</h2>
+
+            <form action="{{ url_for('add_task') }}" method="POST" id="taskForm">
+                <input
+                    type="text"
+                    name="title"
+                    id="taskInput"
+                    placeholder="Enter your study task..."
+                    maxlength="100"
+                    required
+                >
+                
+<select name="priority" id="prioritySelect">
+    <option value="High">High Priority</option>
+    <option value="Medium" selected>Medium Priority</option>
+    <option value="Low">Low Priority</option>
+</select>
+
+                <button type="submit">Add Task</button>
+            </form>
+
+            <h2>My Tasks</h2>
+            
+<ul id="taskList">
+    {% for task in tasks %}
+    <li class="task-item {% if task['completed'] %}completed{% endif %}">
+        <span class="task-name">{{ task['title'] }}</span>
+        <span class="priority-badge priority-{{ task['priority']|lower }}">
+    {{ task['priority'] }}
+</span>
+
+        <form action="{{ url_for('complete_task', task_id=task['id']) }}" method="POST">
+            <button type="submit" class="complete-btn">
+                {% if task['completed'] %}Undo{% else %}Complete{% endif %}
+            </button>
+        </form>
+
+        <form action="{{ url_for('delete_task', task_id=task['id']) }}" method="POST">
+            <button type="submit" class="delete-btn">Delete</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+            <p id="emptyMessage">No tasks yet. Add your first task!</p>
+        </section>
+
+        <footer>
+            <p>Student Task Manager | Full Stack Development Project</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
